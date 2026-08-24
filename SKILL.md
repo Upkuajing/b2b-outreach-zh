@@ -1,7 +1,7 @@
 ---
 name: b2b-outreach-zh
 description: "B2B触达工具集：批量发送冷邮件与全球短信、采集Google Maps商户、并在触达前校验联系方式（手机/WhatsApp、邮箱、域名）。监控邮件/短信送达状态、清洗CRM联系人列表、开展端到端跨境触达活动。\n\nTrigger: 批量冷邮件, 发邮件, 邮件打开率追踪, 企业域名邮箱, 出口商群发邮件, 全球批量短信, 双向短信回复, 短信送达报告, 跨境短信营销, Google地图商户采集, 商户数据下载, 半径线索搜索, 经销商寻源, 手机号校验, WhatsApp状态检测, 邮箱校验, 域名有效性安全检测, CRM数据清洗, 群发短信预校验, B2B触达活动"
-metadata: {"version":"1.0.0","homepage":"https://www.upkuajing.com","clawdbot":{"emoji":"🚀","requires":{"bins":["python"],"env":["UPKUAJING_API_KEY"]},"primaryEnv":"UPKUAJING_API_KEY"}}
+metadata: {"version":"1.0.1","homepage":"https://www.upkuajing.com","clawdbot":{"emoji":"🚀","requires":{"bins":["python"],"env":["UPKUAJING_API_KEY"]},"primaryEnv":"UPKUAJING_API_KEY"}}
 ---
 
 # B2B 触达（Outreach）
@@ -162,6 +162,15 @@ UPKUAJING_API_KEY=your_api_key_here
 
 新申请的密钥需在 [跨境魔方开放平台](https://developer.upkuajing.com/) 注册绑定。
 
+### **上报Skill调用异常**
+当API调用失败或返回异常数据（服务端错误、超时、响应格式错误等）时，先用自然语言向用户解释异常情况，并询问是否需要上报给平台追踪；用户确认后才执行上报：
+```bash
+python scripts/error_report.py --params '{"requestPath":"/agent/mail/send","requestId":"f47ac10b58cc4372a5670e02b2c3d479","context":"邮件发送失败，服务端异常"}'
+```
+- **不要上报正常业务情况**（余额不足、API密钥无效、参数错误等），按各自原有流程处理
+- 异常上报不产生查询费用
+- **参数说明**：参见 [异常上报API](references/skill-error-report-api.md)
+
 ## 计费
 
 **发送/搜索/校验调用均收费**；任务列表与记录列表查询免费。
@@ -188,6 +197,7 @@ python scripts/auth.py --price_info
 - **API 密钥无效/不存在**：检查 `~/.upkuajing/.env` 中的 `UPKUAJING_API_KEY`
 - **余额不足**：引导用户充值
 - **参数无效**：**必须先查 `references/` 下对应 API 文档**，从文档获取正确参数名/格式，不要猜测
+- **Skill调用异常/响应异常**：先友好告知用户，经用户确认后用 `python scripts/error_report.py` 上报给平台（参见 [上报Skill调用异常](#上报skill调用异常)）
 
 ### API 文档参考
 
@@ -202,6 +212,7 @@ python scripts/auth.py --price_info
 
 **校验**（加 `validity-` 前缀，与 email-send 等营销文档区分）
 - [validity-phone](references/validity-phone-api.md) | [validity-email](references/validity-email-api.md) | [validity-domain](references/validity-domain-api.md)
+- 异常上报：查看 [references/skill-error-report-api.md](references/skill-error-report-api.md)
 
 ## 注意事项
 
